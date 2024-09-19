@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #333;
+    color: #eee;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+table {
+    width: 410px;
+    border-collapse: collapse;
+    margin: auto;
+    background-color: #000;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border: 0px solid;
+}
+
+th {
+    background-color: #333;
+    font-size: 0.5rem;
+    padding: 0.25rem;
+}
+
+td{
+    text-shadow: 0 0 10px #eee,0 0 15px #eee;
+    font-family: "DotGothic16", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+#next-bus {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.time{
+    font-size: 1rem;
+}
+.goto{
+    font-size: 1.25rem;
+    background-color: #414ae6;
+}
+.min{
+    font-size:1rem;
+}
