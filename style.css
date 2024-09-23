@@ -10,7 +10,7 @@ h1, h2 {
 }
 
 table {
-    width: 410px;
+    width: 380px;
     border-collapse: collapse;
     margin: auto;
     background-color: #000;
@@ -30,7 +30,7 @@ th {
 }
 
 td{
-    text-shadow: 0 0 10px #eee,0 0 15px #eee;
+    text-shadow: 0 0 2px #eee,0 0 8px #eee;
     font-weight: 400;
     font-style: normal;
 }
@@ -53,6 +53,7 @@ td{
     background-color: #414ae6;
     margin: 0;
 }
+
 .min{
     font-size:1rem;
 }

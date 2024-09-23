@@ -19,10 +19,13 @@ function parseCSV(data) {
         const cols = row.split(',');
         const hour = cols[0].replace('h', '').trim();
         const minutes = cols.slice(1).map(min => {
-            const destination = min.includes('三') ? '<p class="goto"><span>三菱ケミカル前</span></p>'
-                            : min.includes('橋') ? '<p class="goto"><span>奈良北団地</span>（ことり橋経由）</p>'
-                            : '<p class="goto"><span>奈良北団地</span>（こどもの国経由）</p>';
-            return { minute: parseInt(min.replace(/[三橋]/g, '').trim()), destination };
+            const destinationJP = min.includes('三') ? '<p class="goto"><span>三菱ケミカル前</span></p>'
+                            : min.includes('橋') ? '<p class="goto"><span>奈良北団地</span><br>（ことり橋経由）</p>'
+                            : '<p class="goto"><span>奈良北団地</span><br>（こどもの国経由）</p>';
+            const destinationEN = min.includes('三') ? '<p class="goto"><span>MitsubishiChemical-mae</span></p>'
+                            : min.includes('橋') ? '<p class="goto"><span>Narakita-danchi</span> <br>(via Kotoribashi)</p>'
+                            : '<p class="goto"><span>Narakita-danchi</span> <br>(via Kodomo no Kuni)</p>';
+            return { minute: parseInt(min.replace(/[三橋]/g, '').trim()), destinationJP, destinationEN };
         });
         schedule.push({ hour: parseInt(hour), minutes });
     });
@@ -54,7 +57,7 @@ function findNextBus(schedule) {
 }
 
 // 時刻表をテーブルに表示する関数
-function displayTimetable(buses) {
+function displayTimetable(buses, isJapanese) {
     const tbody = document.querySelector('#timetable tbody');
     tbody.innerHTML = ''; // 初期化
 
@@ -68,12 +71,12 @@ function displayTimetable(buses) {
 
         // 行き先のセル
         const destinationCell = document.createElement('td');
-        destinationCell.innerHTML = `${bus.destination}`;
+        destinationCell.innerHTML = isJapanese ? `${bus.destinationJP}` : `${bus.destinationEN}`;
         row.appendChild(destinationCell);
 
         // あと何分かのセル
         const minutesToBusCell = document.createElement('td');
-        minutesToBusCell.innerHTML = `${bus.minutesToBus}分`;
+        minutesToBusCell.innerHTML = `${bus.minutesToBus} ${isJapanese ? '分' : 'min'}`;
         row.appendChild(minutesToBusCell);
 
         tbody.appendChild(row);
@@ -81,9 +84,11 @@ function displayTimetable(buses) {
 }
 
 // 次のバスを表示する関数
-function displayNextBus(bus) {
+function displayNextBus(bus, isJapanese) {
     const nextBusDiv = document.getElementById('next-bus');
-    nextBusDiv.innerHTML = `あと${bus.minutesToBus}分で到着します。`;
+    nextBusDiv.innerHTML = isJapanese 
+        ? `あと${bus.minutesToBus}分で到着します。` 
+        : `Arrive in ${bus.minutesToBus} min.`;
 }
 
 // 平日か休日かを判断する関数
@@ -98,10 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const csvFile = isHoliday() ? 'holiday.csv' : 'weekdays.csv';
 
     loadCSV(csvFile).then(schedule => {
+        let isJapanese = true; // 最初は日本語で表示
         const nextBuses = findNextBus(schedule);
-        displayTimetable(nextBuses);
-        if (nextBuses.length > 0) {
-            displayNextBus(nextBuses[0]);
+        
+        function updateDisplay() {
+            displayTimetable(nextBuses, isJapanese);
+            if (nextBuses.length > 0) {
+                displayNextBus(nextBuses[0], isJapanese);
+            }
+            isJapanese = !isJapanese; // 表示を切り替える
         }
+
+        updateDisplay(); // 初回表示
+        setInterval(updateDisplay, 5000); // 5秒ごとに表示を切り替える
     });
 });
